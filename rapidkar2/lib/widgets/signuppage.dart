@@ -184,8 +184,18 @@ class _SignUpPageState extends State<SignUpPage> {
                           borderRadius: new BorderRadius.circular(5.0),
                         ),
                         onPressed: () async{
+                          int vrai = 0;
+
+                          for(int i=0;i<all_owner.length;++i)
+                            {
+                              if(_controllerEmail.text == all_owner[i].email)
+                                {
+                                  showCenterShortToast('Email existe déjà');
+                                  vrai = 1;
+                                }
+                            }
                           if (!(_controllerEmail.text.contains('@') ||
-                              _controllerEmail.text.contains('.'))) {
+                              _controllerEmail.text.contains('.') || vrai == 1)) {
                             showCenterShortToast('Email incorrecte');
                           }
                           else {

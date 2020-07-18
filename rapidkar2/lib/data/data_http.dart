@@ -11,6 +11,11 @@ Future fetchAllCar() async {
   return response;
 }
 
+Future fetchAllOwner() async {
+  final response = await http.get('https://www.rapidkar.com/api/public/api/owner2');
+  return response;
+}
+
 
 Future fetchFavoriteOfOwner(int id) async {
   final response = await http.get('https://www.rapidkar.com/api/public/api/favorite/$id');
@@ -35,8 +40,16 @@ Future updateOwner(Owner owner) async {
     );
 
     return response;
+}
 
+Future updateCar(Car car) async {
+  //final response = await http.put('https://www.rapidkar.com/api/public/api/owner/${owner.id}');
 
+  final response = await http.put(
+    'https://www.rapidkar.com/api/public/api/car/${car.id}?brand=${car.brand}&model=${car.model}&numberplate=${car.numberplate}&gearshift=${car.gearshift}&fuel=${car.fuel}&places=${car.places}&doors=${car.doors}&lastCtrlDate=${car.lastCtrlDate}&loan=${car.loan}&insurance=${car.insurance}&driver=${car.driver}&location=Abidjan&age=${car.age}&owner=${car.owner}&tocall=${car.tocall}&available=1&img_1=${car.img1}&img_2=${car.img2}&img_3=${car.img3}&img_4=${car.img4}&img_5=${car.img5}',
+  );
+
+  return response;
 }
 
 Future createOwner(Owner owner) async {
@@ -62,7 +75,7 @@ Future createFavorite(Favorite favorite) async {
 }
 
 Future deleteFavorite(Favorite favorite) async {
-  final response = await http.delete('https://www.rapidkar.com/api/public/api/favorite/${favorite.id}');
+  final response = await http.delete('https://www.rapidkar.com/api/public/api/favorite2/${favorite.id}');
 
   print('sssssssssssssstttttttttttaaaaaaaaaattttttttttttttuuuuuuuuuuus ${response.statusCode}');
   return response;
@@ -74,6 +87,8 @@ Future deleteCar (Car car) async {
   print('sssssssssssssstttttttttttaaaaaaaaaattttttttttttttuuuuuuuuuuus ${response.statusCode}');
   return response;
 }
+
+
 
 
 

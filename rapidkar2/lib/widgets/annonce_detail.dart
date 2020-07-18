@@ -67,6 +67,22 @@ class _DetailsPageState extends State<DetailsPage> {
         onPressed: () {
           setState(() {
             index = 0;
+            Favorite fav;
+            for(int i=0;i<favoritesOfOwner.length;++i)
+              {
+                if(widget.car.id == favoritesOfOwner[i].car && currentOwner.id == favoritesOfOwner[i].fan)
+                  {
+                    fav = favoritesOfOwner[i];
+                  }
+              }
+            deleteFavorite(fav);
+            fetchFavoriteOfOwner(currentOwner.id).then((response) {
+              setState(() {
+                Iterable list = json.decode(response.body);
+                favoritesOfOwner = list.map((model) => Favorite.fromJson(model)).toList();
+                print('ffffffffffffffffaaaaaaaaaaaaaaaav ${favoritesOfOwner[0].fan}');
+              });
+            });
           });
         },)
     ];
@@ -223,151 +239,154 @@ class _DetailsPageState extends State<DetailsPage> {
 
           ],
         ),
-        body: ListView(children: [
-          Stack(children: [
-            Container(
-                height: MediaQuery.of(context).size.height - 82.0,
-                width: MediaQuery.of(context).size.width,
-                color: Colors.transparent),
-            Positioned(
-                top: 75.0,
-                child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(45.0),
-                          topRight: Radius.circular(45.0),
-                        ),
-                        color: Colors.white),
-                    height: MediaQuery.of(context).size.height - 100.0,
-                    width: MediaQuery.of(context).size.width)),
-            Positioned(
-                top: 100.0,
-                left: 40,
-                right: 40,
-                child: Hero(
-                    tag: widget.car.img1,
-                    child: Container(
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          child: ListView(children: [
+            Stack(children: [
+              Container(
+                  height: MediaQuery.of(context).size.height - 82.0,
+                  width: MediaQuery.of(context).size.width,
+                  color: Colors.orange),
+              Positioned(
+                  top: 75.0,
+                  child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(45.0),
                             topRight: Radius.circular(45.0),
                           ),
-                      ),
-                        child: Carousel(
-                          boxFit: BoxFit.cover,
-                          borderRadius: true,
-                          autoplay: false,
-                          animationCurve: Curves.fastOutSlowIn,
-                          animationDuration: Duration(milliseconds: 1000),
-                          dotSize: 6.0,
-                          dotIncreasedColor: Colors.deepOrangeAccent,
-                          dotBgColor: Colors.transparent,
-                          dotPosition: DotPosition.topRight,
-                          dotVerticalPadding: 10.0,
-                          showIndicator: true,
-                          indicatorBgPadding: 7.0,
-                          images: [
-                            Image.network('https://www.rapidkar.com/img/cars/${widget.car.img1}',width: 100,height: 100,),
-                            Image.network('https://www.rapidkar.com/img/cars/${widget.car.img2}',width: 100,height: 100),
-                            Image.network('https://www.rapidkar.com/img/cars/${widget.car.img3}',width: 100,height: 100),
-                            Image.network('https://www.rapidkar.com/img/cars/${widget.car.img4}',width: 100,height: 100),
-                            Image.network('https://www.rapidkar.com/img/cars/${widget.car.img5}',width: 100,height: 100),
-
-                          ],
-                        ),
-                        height: 140.0,
-                        width: 500.0))),
-            Positioned(
-                top: 250.0,
-                left: 25.0,
-                right: 25.0,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(widget.car.brand,
-                        style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            fontSize: 22.0,
-                            fontWeight: FontWeight.bold)),
-                    SizedBox(height: 20.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text(widget.car.loan.toString()+ ' FRS/JOUR',
-                            style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 20.0,
-                                color: Colors.grey)),
-                        Container(height: 25.0, color: Colors.grey, width: 1.0),
-                        Container(
-                          width: 125.0,
-                          height: 40.0,
+                          color: Colors.white),
+                      height: MediaQuery.of(context).size.height - 100.0,
+                      width: MediaQuery.of(context).size.width)),
+              Positioned(
+                  top: 100.0,
+                  left: 40,
+                  right: 40,
+                  child: Hero(
+                      tag: widget.car.img1,
+                      child: Container(
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(17.0),
-                              color: (widget.car.available == 1 ) ? Colors.green : Colors.red),
-                          child: (widget.car.available == 1 ) ? Center(child: Text('Disponible',),) : Center(child: Text('Indisponible',),)
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 20.0),
-                    Container(
-                        height: 150.0,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: <Widget>[
-                            _buildInfoCard('Modèle', widget.car.model),
-                            SizedBox(width: 10.0),
-                            _buildInfoCard('Boite de vitesse', gearshift(widget.car.gearshift)),
-                            SizedBox(width: 10.0),
-                            _buildInfoCard('Sièges', widget.car.places.toString()),
-                            SizedBox(width: 10.0),
-                            _buildInfoCard('Carburant', fuel(widget.car.fuel)),
-                            SizedBox(width: 10.0),
-                            _buildInfoCard('Année', widget.car.age.toString())
-                          ],
-                        )
-                    ),
-                    SizedBox(height: 20.0),
-                    Container(
-                      padding: EdgeInsets.only(bottom: 5.0),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(10.0),
-                              topRight: Radius.circular(10.0),
-                              bottomLeft: Radius.circular(25.0),
-                              bottomRight: Radius.circular(25.0)),
-                          color: Colors.black
-                      ),
-                      height: 50.0,
-                      child: Center(
-                          child: FlatButton(
-                            onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context){
-                                    return AlertDialog(
-                                      title: Text("Contact"),
-                                      content: Text('${widget.car.tocall}'),
-                                    );
-                                  }
-                              );
-                            },
-                            child: Text(
-                                'Contacter',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontFamily: 'Montserrat'
-                                )
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(45.0),
+                              topRight: Radius.circular(45.0),
                             ),
-                          )
                           ),
+                          child: Carousel(
+                            boxFit: BoxFit.cover,
+                            borderRadius: true,
+                            autoplay: false,
+                            animationCurve: Curves.fastOutSlowIn,
+                            animationDuration: Duration(milliseconds: 1000),
+                            dotSize: 6.0,
+                            dotIncreasedColor: Colors.deepOrangeAccent,
+                            dotBgColor: Colors.transparent,
+                            dotPosition: DotPosition.topRight,
+                            dotVerticalPadding: 10.0,
+                            showIndicator: true,
+                            indicatorBgPadding: 7.0,
+                            images: [
+                              Image.network('https://www.rapidkar.com/img/cars/${widget.car.img1}',width: 100,height: 100,),
+                              Image.network('https://www.rapidkar.com/img/cars/${widget.car.img2}',width: 100,height: 100),
+                              Image.network('https://www.rapidkar.com/img/cars/${widget.car.img3}',width: 100,height: 100),
+                              Image.network('https://www.rapidkar.com/img/cars/${widget.car.img4}',width: 100,height: 100),
+                              Image.network('https://www.rapidkar.com/img/cars/${widget.car.img5}',width: 100,height: 100),
+
+                            ],
+                          ),
+                          height: 140.0,
+                          width: 500.0))),
+              Positioned(
+                  top: 250.0,
+                  left: 25.0,
+                  right: 25.0,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(widget.car.brand,
+                          style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 22.0,
+                              fontWeight: FontWeight.bold)),
+                      SizedBox(height: 20.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(widget.car.loan.toString()+ ' FRS/JOUR',
+                              style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 20.0,
+                                  color: Colors.grey)),
+                          Container(height: 25.0, color: Colors.grey, width: 1.0),
+                          Container(
+                              width: 125.0,
+                              height: 40.0,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(17.0),
+                                  color: (widget.car.available == 1 ) ? Colors.green : Colors.red),
+                              child: (widget.car.available == 1 ) ? Center(child: Text('Disponible',),) : Center(child: Text('Indisponible',),)
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 20.0),
+                      Container(
+                          height: 150.0,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: <Widget>[
+                              _buildInfoCard('Modèle', widget.car.model),
+                              SizedBox(width: 10.0),
+                              _buildInfoCard('Boite de vitesse', gearshift(widget.car.gearshift)),
+                              SizedBox(width: 10.0),
+                              _buildInfoCard('Sièges', widget.car.places.toString()),
+                              SizedBox(width: 10.0),
+                              _buildInfoCard('Carburant', fuel(widget.car.fuel)),
+                              SizedBox(width: 10.0),
+                              _buildInfoCard('Année', widget.car.age.toString())
+                            ],
+                          )
+                      ),
+                      SizedBox(height: 20.0),
+                      Container(
+                        padding: EdgeInsets.only(bottom: 5.0),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10.0),
+                                topRight: Radius.circular(10.0),
+                                bottomLeft: Radius.circular(25.0),
+                                bottomRight: Radius.circular(25.0)),
+                            color: Colors.black
                         ),
+                        height: 50.0,
+                        child: Center(
+                            child: FlatButton(
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context){
+                                      return AlertDialog(
+                                        title: Text("Contact"),
+                                        content: Text('${widget.car.tocall}'),
+                                      );
+                                    }
+                                );
+                              },
+                              child: Text(
+                                  'Contacter',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: 'Montserrat'
+                                  )
+                              ),
+                            )
+                        ),
+                      ),
 
 
-                  ],
-                ))
-          ])
-        ]));
+                    ],
+                  ))
+            ])
+          ]),
+        ));
   }
 
   Widget _buildInfoCard(String cardTitle, String info) {
@@ -414,7 +433,7 @@ class _DetailsPageState extends State<DetailsPage> {
                         Text(info,
                             style: TextStyle(
                                 fontFamily: 'Montserrat',
-                                fontSize: 14.0,
+                                fontSize: MediaQuery.of(context).size.width/40,
                                 color: cardTitle == selectedCard
                                     ? Colors.white
                                     : Colors.black,

@@ -61,6 +61,7 @@ class _Accueil extends State<Accueil> {
                 height: 230,width: 230,),
 
               Container(
+                height: MediaQuery.of(context).size.height/20,
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.white60),
                   borderRadius: BorderRadius.circular(5.0),
@@ -75,14 +76,12 @@ class _Accueil extends State<Accueil> {
               ),
               Expanded(
                   child: SizedBox(
-                      height: 200.0,
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
                         padding: const EdgeInsets.all(8),
                         itemCount: allCar.length,
                         itemBuilder: (BuildContext context, int index) {
                           return Container(
-                            height: 250,
                             child: myCars(allCar[index]),
                           );
                         },

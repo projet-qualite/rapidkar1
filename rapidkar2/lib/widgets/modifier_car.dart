@@ -87,7 +87,6 @@ List<String> marque = <String>[
   'Peugeot',
   'Toyota',
   'Volkswagen',
-  'Toyota'
 ];
 
 
@@ -148,7 +147,7 @@ class _MarqueModele extends State<MarqueModele> {
                         onChanged: (selectedMarque){
                           setState(() {
                             selectedMarque2 = selectedMarque;
-                            currentCar.brand = selectedMarque2;
+                            widget.car.brand = selectedMarque2;
                           });
                         },
                         value: selectedMarque2,
@@ -197,7 +196,7 @@ class _MarqueModele extends State<MarqueModele> {
                                     }
 
                                     else {
-                                      currentCar.model =
+                                      widget.car.model =
                                           _controllerModele.text;
 
                                       Navigator.push(this.context,
@@ -344,9 +343,9 @@ class _Immatriculation extends State<Immatriculation> {
                                       showCenterShortToast("Nombre de portière non valide.");
                                     }
                                     else{
-                                      currentCar.numberplate = _controllerImm.text;
-                                      currentCar.places = int.tryParse(_controllerPlace.text);
-                                      currentCar.doors = int.tryParse(_controllerPortiere.text);
+                                      widget.car.numberplate = _controllerImm.text;
+                                      widget.car.places = int.tryParse(_controllerPlace.text);
+                                      widget.car.doors = int.tryParse(_controllerPortiere.text);
 
                                       Navigator.push(this.context,
                                           MaterialPageRoute<void>(
@@ -542,10 +541,10 @@ class _Detail extends State<Detail> {
     _controllerDate.text = widget.car.age.toString();
     _controllerDateCT.text = widget.car.lastCtrlDate.toString();
     _controllerContact.text = widget.car.tocall.toString();
-    selectedEssence = fuel2(widget.car.fuel);
+    /*selectedEssence = fuel2(widget.car.fuel);
     selectedBoite = gearshift2(widget.car.gearshift);
     selectedAssurance = Ass(widget.car.insurance);
-    selectedChauffer2 = Ass(widget.car.driver);
+    selectedChauffer2 = Ass(widget.car.driver);*/
 
 
 
@@ -579,6 +578,7 @@ class _Detail extends State<Detail> {
                           onChanged: (selectedE){
                             setState(() {
                               selectedEssence = selectedE;
+
                             });
                           },
                           value: selectedEssence,
@@ -730,12 +730,11 @@ class _Detail extends State<Detail> {
                                       }
 
                                       else{
-                                        currentCar.driver = (selectedChauffer2 == 'Oui') ? 1:0;
-                                        currentCar.insurance = (selectedAssurance == 'Oui') ? 1:0;
-                                        currentCar.loan = int.tryParse(_controllerMontant.text);
-                                        currentCar.age = int.tryParse(_controllerDate.text);
-                                        currentCar.tocall = _controllerContact.text;
-                                        currentCar.owner = currentOwner.id;
+                                        widget.car.driver = (selectedChauffer2 == 'Oui') ? 1:0;
+                                        widget.car..insurance = (selectedAssurance == 'Oui') ? 1:0;
+                                        widget.car..loan = int.tryParse(_controllerMontant.text);
+                                        widget.car..age = int.tryParse(_controllerDate.text);
+                                        widget.car..tocall = _controllerContact.text;
                                         if(selectedBoite==null)
                                         {
                                           showCenterShortToast("Selectionner boîte de vitesse.");
@@ -827,39 +826,16 @@ class _ImageFile extends State<ImageFile> {
 
 
   TextEditingController _controllerImm = TextEditingController();
-  dynamic _image1;
+  File _image1;
   File _image2;
   File _image3;
   File _image4;
   File _image5;
 
-  int index1=0;
-  int index2=0;
-  int index3=0;
-  int index4=0;
-  int index5=0;
 
 
-
-
-
-
-
-@override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    print('${widget.car.img1} ${widget.car.img2} ${widget.car.img5}');
-  }
   @override
   Widget build(BuildContext context) {
-
-    var img1 = [Image.network('https://www.rapidkar.com/img/cars/${widget.car.img1}',fit: BoxFit.cover,)];
-    var img2 = [Image.network('https://www.rapidkar.com/img/cars/${widget.car.img2}',fit: BoxFit.cover,), 4];
-    var img3 = [Image.network('https://www.rapidkar.com/img/cars/${widget.car.img3}',fit: BoxFit.cover,), 4];
-    var img4 = [Image.network('https://www.rapidkar.com/img/cars/${widget.car.img4}',fit: BoxFit.cover,), 4];
-    var img5 = [Image.network('https://www.rapidkar.com/img/cars/${widget.car.img5}',fit: BoxFit.cover,), 4];
-
 
     ProgressDialog pr = new ProgressDialog(context);
     pr.style(
@@ -894,25 +870,10 @@ class _ImageFile extends State<ImageFile> {
               crossAxisCount: 3,
               children: <Widget>[
                 GestureDetector(
-                  onTap: () async {
-                    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-                    setState(() {
-                      _image1 = image;
-                      img1 = [Image.file(_image1, fit: BoxFit.cover,)];
-                      print(img1);
-                      index1 = 1;
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (context) {
-                          return ImageFile(car: widget.car,);
-                        }),
-                            (Route<dynamic> route) => false,
-                      );
-                    });
-                  },
+                  onTap: getImage1,
                   child: Container(
                     color: Colors.black12,
-                    child: widget.car.img1 == null ? Icon(Icons.add): img1[0],
+                    child: _image1 == null ? Icon(Icons.add): Image.file(_image1, fit: BoxFit.cover,),
                   ),
                 ),
                 GestureDetector(
@@ -950,85 +911,73 @@ class _ImageFile extends State<ImageFile> {
             InkWell(
                 onTap: () async{
 
-                  print('cccccuuuuuuuuuuurrrrrrrreeeeeeeeennnnnnnnnttttttt ${_image1.path.split("/").last} ');
 
-
-
-
-
-                  if(_image1!=null)
+                  if(_image1 == null && _image2 == null && _image3 == null && _image4 == null && _image5 == null)
                   {
-                    currentCar.img1 = _image1.path.split("/").last;
-                    postImageCar(_image1);
+                    showCenterShortToast('Veuillez sélectionner au moins une image');
                   }
-                  if(_image2!=null)
-                  {
-                    currentCar.img2 = _image2.path.split("/").last;
-                    postImageCar(_image2);
-                  }
-                  if(_image3!=null)
-                  {
-                    currentCar.img3 = _image3.path.split("/").last;
-                    postImageCar(_image3);
-                  }
-                  if(_image4!=null)
-                  {
-                    currentCar.img4 = _image4.path.split("/").last;
-                    postImageCar(_image4);
-                  }
-                  if(_image5!=null)
-                  {
-                    currentCar.img5 = _image5.path.split("/").last;
-                    postImageCar(_image5);
-                  }
-
-                  /*currentCar.img1 = (_image1.path) == null ? '': _image1.path;
-                  currentCar.img2 = (_image2.path) == null ? '': _image2.path;
-                  currentCar.img3 = (_image3.path) == null ? '': _image3.path;
-                  currentCar.img4 = (_image4.path) == null ? '': _image4.path;
-                  currentCar.img5 = (_image5.path) == null ? '': _image5.path;
-
-                  currentCar.owner = mainOwner.id;
-
-
-                  pr.show();
-
-
-                  final Car o = await createCar(currentCar);
-
-                  Future.delayed(Duration(seconds: 3)).then((value) {
-                    pr.hide().whenComplete(() {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (BuildContext context) {
-                            currentIndex = 4;
-                            return new MyHomePage();
-                          }));
-                    });
-                  });
-
-*/
-
-                  /*print('cccccuuuuuuuuuuurrrrrrrreeeeeeeeennnnnnnnnttttttt ${currentCar.available}| ${currentCar.driver} |${currentCar.loan} |${currentCar.places} ');
-                  print('cccccuuuuuuuuuuurrrrrrrreeeeeeeeennnnnnnnnttttttt ${currentCar.gearshift}| ${currentCar.lastCtrlDate} ');*/
-                  pr.show();
-                  createCar(currentCar).then((response) {
-                    setState(() {
-                      //Map<String, dynamic> list = json.decode(response.body);
-                      FirstPage();
-                      print('ooooooooooooooooooooooooooooooooo ${response.body}');
-                      Future.delayed(Duration(seconds: 3)).then((value) {
-                        pr.hide().whenComplete(() {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (BuildContext context) {
-                                currentIndex = 3;
-                                return new MyHomePage();
-                              }));
+                  else{
+                    if(_image1!=null)
+                    {
+                      widget.car.img1 = _image1.path.split("/").last;
+                      postImageCar(_image1);
+                    }
+                    if(_image2!=null)
+                    {
+                      widget.car.img2 = _image2.path.split("/").last;
+                      postImageCar(_image2);
+                    }
+                    if(_image3!=null)
+                    {
+                      widget.car.img3 = _image3.path.split("/").last;
+                      postImageCar(_image3);
+                    }
+                    if(_image4!=null)
+                    {
+                      widget.car.img4 = _image4.path.split("/").last;
+                      postImageCar(_image4);
+                    }
+                    if(_image5!=null)
+                    {
+                      widget.car.img5 = _image5.path.split("/").last;
+                      postImageCar(_image5);
+                    }
+                    pr.show();
+                    updateCar(widget.car).then((response) {
+                      setState(() {
+                        Map<String, dynamic> list = json.decode(response.body);
+                        print('ooooooooooooooooooooooooooooooooo ${response.body}');
+                        fetchAllCar().then((response) {
+                          setState(() {
+                            Iterable list = json.decode(response.body).reversed;
+                            allCar = list.map((model) => Car.fromJson(model)).toList();
+                            print(allCar);
+                          });
                         });
+
+                        fetchCarOfOwner(currentOwner.id).then((response) {
+                          setState(() {
+                            Iterable list = json.decode(response.body);
+                            cars_of_owner = list.map((model) => Car.fromJson(model)).toList();
+                            print(cars_of_owner);
+                          });
+                        });
+                        Future.delayed(Duration(seconds: 3)).then((value) {
+                          pr.hide().whenComplete(() {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (BuildContext context) {
+                                  currentIndex = 3;
+
+                                  return new MyHomePage();
+                                }));
+                          });
+                        });
+
+
                       });
-
-
                     });
-                  });
+                  }
+
 
 
 
@@ -1065,18 +1014,20 @@ class _ImageFile extends State<ImageFile> {
   }
 
 
-
   Future getImage1() async
   {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _image1 = image;
+    });
 
-
+    print('Imageeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee : $image');
   }
   Future getImage2() async
   {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
       _image2 = image;
-      index2 = 1;
     });
 
     print('Imageeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee : $image');
@@ -1085,7 +1036,6 @@ class _ImageFile extends State<ImageFile> {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
       _image3 = image;
-      index3 = 1;
     });
 
     print('Imageeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee : $image');
@@ -1095,7 +1045,6 @@ class _ImageFile extends State<ImageFile> {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
       _image4 = image;
-      index5 = 1;
     });
 
     print('Imageeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee : $image');
@@ -1105,16 +1054,10 @@ class _ImageFile extends State<ImageFile> {
     var image5 = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
       _image5 = image5;
-      index5 = 1;
     });
 
     print('Imageeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee : $image5');
   }
-
-
-
-
-
 
 
 

@@ -7,6 +7,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:rapidkar/classes/car.dart';
 import 'package:rapidkar/classes/favorite.dart';
+import 'package:rapidkar/classes/owner.dart';
 import 'package:rapidkar/data/data_http.dart';
 import 'package:rapidkar/data/data_long.dart';
 import 'package:rapidkar/data/data_test.dart';
@@ -70,6 +71,14 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     print('yo la cité');
 
+    fetchAllOwner().then((response) {
+      setState(() {
+        Iterable list = json.decode(response.body).reversed;
+        all_owner = list.map((model) => Owner.fromJson(model)).toList();
+        print(all_owner);
+      });
+    });
+
 
       if(currentOwner.email == '')
       {
@@ -96,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: pages[currentIndex],
 
       bottomNavigationBar: Container(
-        height:10 *(SizeConfig.heightMultiplier) +1,
+        height:(MediaQuery.of(context).size.height/70) *(SizeConfig.heightMultiplier) +1,
         decoration: BoxDecoration(color: Colors.orange[500], boxShadow: [
           BoxShadow(blurRadius: 20, color: Colors.black.withOpacity(.1))
         ]),

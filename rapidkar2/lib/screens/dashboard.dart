@@ -82,7 +82,7 @@ class _Dashboard extends State<Dashboard> {
         children: <Widget>[
           Container(
             color: Colors.orange[500],
-            height: 40 * SizeConfig.heightMultiplier,
+            height: MediaQuery.of(context).size.height,
             child: Padding(
               padding: EdgeInsets.only(
                   left: 30.0,
@@ -90,7 +90,7 @@ class _Dashboard extends State<Dashboard> {
               child: Column(
                 children: <Widget>[
                   Container(
-                      margin: EdgeInsets.only(left: 140.0),
+                      margin: EdgeInsets.only(left: MediaQuery.of(context).size.width/2.5),
                       width: 100,
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.red),
@@ -103,8 +103,7 @@ class _Dashboard extends State<Dashboard> {
                             "Deconnexion",
                             style: TextStyle(
                                 color: Colors.white60,
-                                fontSize:
-                                1.8 * SizeConfig.textMultiplier),
+                                fontSize: MediaQuery.of(context).size.width/26),
                           ),
                         ),
                         onTap: (){
@@ -263,7 +262,7 @@ class _Dashboard extends State<Dashboard> {
                               },
                             )
                           ),
-                          SizedBox(height: 10,),
+                          SizedBox(height: MediaQuery.of(context).size.height/20,),
                           ],
                   ),
                 ],

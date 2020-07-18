@@ -13,6 +13,7 @@ import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:rapidkar/classes/car.dart';
 import 'package:rapidkar/data/data_http.dart';
 import 'package:rapidkar/data/data_test.dart';
 import 'package:rapidkar/widgets/first_page.dart';
@@ -852,85 +853,73 @@ class _ImageFile extends State<ImageFile> {
             InkWell(
                 onTap: () async{
 
-                  print('cccccuuuuuuuuuuurrrrrrrreeeeeeeeennnnnnnnnttttttt ${_image1.path.split("/").last} ');
 
-
-
-
-
-                  if(_image1!=null)
+                  if(_image1 == null && _image2 == null && _image3 == null && _image4 == null && _image5 == null)
+                    {
+                          showCenterShortToast('Veuillez sélectionner au moins une image');
+                    }
+                  else{
+                    if(_image1!=null)
                     {
                       currentCar.img1 = _image1.path.split("/").last;
                       postImageCar(_image1);
                     }
-                  if(_image2!=null)
-                  {
-                    currentCar.img2 = _image2.path.split("/").last;
-                    postImageCar(_image2);
-                  }
-                  if(_image3!=null)
-                  {
-                    currentCar.img3 = _image3.path.split("/").last;
-                    postImageCar(_image3);
-                  }
-                  if(_image4!=null)
-                  {
-                    currentCar.img4 = _image4.path.split("/").last;
-                    postImageCar(_image4);
-                  }
-                  if(_image5!=null)
-                  {
-                    currentCar.img5 = _image5.path.split("/").last;
-                    postImageCar(_image5);
-                  }
+                    if(_image2!=null)
+                    {
+                      currentCar.img2 = _image2.path.split("/").last;
+                      postImageCar(_image2);
+                    }
+                    if(_image3!=null)
+                    {
+                      currentCar.img3 = _image3.path.split("/").last;
+                      postImageCar(_image3);
+                    }
+                    if(_image4!=null)
+                    {
+                      currentCar.img4 = _image4.path.split("/").last;
+                      postImageCar(_image4);
+                    }
+                    if(_image5!=null)
+                    {
+                      currentCar.img5 = _image5.path.split("/").last;
+                      postImageCar(_image5);
+                    }
+                    pr.show();
+                    createCar(currentCar).then((response) {
+                      setState(() {
+                        //Map<String, dynamic> list = json.decode(response.body);
+                        FirstPage();
+                        print('ooooooooooooooooooooooooooooooooo ${response.body}');
+                        Future.delayed(Duration(seconds: 3)).then((value) {
+                          pr.hide().whenComplete(() {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (BuildContext context) {
+                                  currentIndex = 3;
+                                  fetchAllCar().then((response) {
+                                    setState(() {
+                                      Iterable list = json.decode(response.body).reversed;
+                                      allCar = list.map((model) => Car.fromJson(model)).toList();
+                                      print(allCar);
+                                    });
+                                  });
 
-                  /*currentCar.img1 = (_image1.path) == null ? '': _image1.path;
-                  currentCar.img2 = (_image2.path) == null ? '': _image2.path;
-                  currentCar.img3 = (_image3.path) == null ? '': _image3.path;
-                  currentCar.img4 = (_image4.path) == null ? '': _image4.path;
-                  currentCar.img5 = (_image5.path) == null ? '': _image5.path;
-
-                  currentCar.owner = mainOwner.id;
-
-
-                  pr.show();
-
-
-                  final Car o = await createCar(currentCar);
-
-                  Future.delayed(Duration(seconds: 3)).then((value) {
-                    pr.hide().whenComplete(() {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (BuildContext context) {
-                            currentIndex = 4;
-                            return new MyHomePage();
-                          }));
-                    });
-                  });
-
-*/
-
-                  /*print('cccccuuuuuuuuuuurrrrrrrreeeeeeeeennnnnnnnnttttttt ${currentCar.available}| ${currentCar.driver} |${currentCar.loan} |${currentCar.places} ');
-                  print('cccccuuuuuuuuuuurrrrrrrreeeeeeeeennnnnnnnnttttttt ${currentCar.gearshift}| ${currentCar.lastCtrlDate} ');*/
-                  pr.show();
-                  createCar(currentCar).then((response) {
-                    setState(() {
-                      //Map<String, dynamic> list = json.decode(response.body);
-                      FirstPage();
-                      print('ooooooooooooooooooooooooooooooooo ${response.body}');
-                      Future.delayed(Duration(seconds: 3)).then((value) {
-                        pr.hide().whenComplete(() {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (BuildContext context) {
-                                currentIndex = 3;
-                                return new MyHomePage();
-                              }));
+                                  fetchCarOfOwner(currentOwner.id).then((response) {
+                                    setState(() {
+                                      Iterable list = json.decode(response.body);
+                                      cars_of_owner = list.map((model) => Car.fromJson(model)).toList();
+                                      print(cars_of_owner);
+                                    });
+                                  });
+                                  return new MyHomePage();
+                                }));
+                          });
                         });
+
+
                       });
-
-
                     });
-                  });
+                  }
+
 
 
 
@@ -1011,11 +1000,6 @@ class _ImageFile extends State<ImageFile> {
 
     print('Imageeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee : $image5');
   }
-
-
-
-
-
 
 
 

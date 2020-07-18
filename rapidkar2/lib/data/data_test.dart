@@ -143,3 +143,4 @@ Favorite favorite(Car car)
 }
 var index;
 List<Car> cars_of_owner = [];
+List<Owner> all_owner = [];
